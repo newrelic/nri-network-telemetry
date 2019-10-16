@@ -24,6 +24,7 @@ func (n *NetInfo) loadHosts(filename string) (count uint32, err error) {
 	if err != nil {
 		return 0, err
 	}
+
 	reader := csv.NewReader(fileh)
 
 	for {
@@ -31,6 +32,7 @@ func (n *NetInfo) loadHosts(filename string) (count uint32, err error) {
 		if err == io.EOF {
 			break
 		}
+
 		if err != nil {
 			return count, err
 		}

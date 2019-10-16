@@ -49,25 +49,28 @@ type SflowPacket []byte
  *
  ******************************************************************************/
 func (h *SflowHandler) Start() {
-
 	for packet := range h.packetChan {
-		txn := h.nr.StartTransaction("SflowPacket", nil, nil)
-
-		parseSegment := newrelic.StartSegment(txn, "CreateParser")
 		var sflow layers.SFlowDatagram
+
+		txn := h.nr.StartTransaction("SflowPacket", nil, nil)
+		parseSegment := newrelic.StartSegment(txn, "CreateParser")
 		parser := gopacket.NewDecodingLayerParser(layers.LayerTypeSFlow, &sflow)
 		decoded := make([]gopacket.LayerType, 0, 10)
+
 		util.LogIfErr(parseSegment.End())
 
 		decodeSegment := newrelic.StartSegment(txn, "DecodeLayers")
 		err := parser.DecodeLayers(packet, &decoded)
+
 		util.LogIfErr(decodeSegment.End())
+
 		if err != nil {
 			log.Warnf("SflowHandler: Unable to create decoder: %v", err)
 			log.Debugf("%s", hex.Dump(packet))
 
 			util.LogIfErr(txn.NoticeError(err))
 			util.LogIfErr(txn.End())
+
 			continue
 		}
 
@@ -78,6 +81,7 @@ func (h *SflowHandler) Start() {
 			log.Errorf("SflowHandler: Failed to make events with error: %v", err)
 			util.LogIfErr(txn.NoticeError(err))
 			util.LogIfErr(txn.End())
+
 			continue
 		}
 
@@ -103,11 +107,11 @@ func (h *SflowHandler) makeEvents(sflow layers.SFlowDatagram, txn newrelic.Trans
 
 		for _, record := range sample.GetRecords() {
 			//nolint:gocritic
-			switch record.(type) {
+			switch record := record.(type) {
 			case layers.SFlowRawPacketFlowRecord:
 				util.LogIfErr(txn.AddAttribute("SFlowRawPacketFlowRecord", true))
 
-				packet := record.(layers.SFlowRawPacketFlowRecord).Header
+				packet := record.Header
 				for _, layer := range packet.Layers() {
 					switch layer.LayerType() {
 					case layers.LayerTypeDot1Q:
@@ -142,20 +146,19 @@ func (h *SflowHandler) makeEvents(sflow layers.SFlowDatagram, txn newrelic.Trans
 						rec["transportType"] = packet.TransportLayer().LayerType().String()
 						rec["combinedHash"] = util.Uint64ToS(util.CombinedHash(packet))
 					}
-
 				}
 
 			case layers.SFlowExtendedGatewayFlowRecord:
 				util.LogIfErr(txn.AddAttribute("SFlowExtendedSwitchFlowRecord", true))
 
-				rec["nextHop"] = record.(layers.SFlowExtendedGatewayFlowRecord).NextHop.String()
-				rec["AS"] = record.(layers.SFlowExtendedGatewayFlowRecord).AS
-				rec["sourceAS"] = record.(layers.SFlowExtendedGatewayFlowRecord).SourceAS
-				rec["peerAS"] = record.(layers.SFlowExtendedGatewayFlowRecord).PeerAS
-				rec["ASPathCount"] = record.(layers.SFlowExtendedGatewayFlowRecord).ASPathCount
-				//rec["ASPath"] = record.(layers.SFlowExtendedGatewayFlowRecord).ASPath
+				rec["nextHop"] = record.NextHop.String()
+				rec["AS"] = record.AS
+				rec["sourceAS"] = record.SourceAS
+				rec["peerAS"] = record.PeerAS
+				rec["ASPathCount"] = record.ASPathCount
+				//rec["ASPath"] = record.ASPath
 				//rec["communities"]
-				rec["localPref"] = record.(layers.SFlowExtendedGatewayFlowRecord).LocalPref
+				rec["localPref"] = record.LocalPref
 
 			case layers.SFlowExtendedSwitchFlowRecord:
 				util.LogIfErr(txn.AddAttribute("SFlowExtendedSwitchFlowRecord", true))
@@ -179,6 +182,7 @@ func (h *SflowHandler) makeEvents(sflow layers.SFlowDatagram, txn newrelic.Trans
 		// Send off the event
 		queueSegment := newrelic.StartSegment(txn, "QueueForEmit")
 		h.resultChan <- rec
+
 		util.LogIfErr(queueSegment.End())
 	}
 

@@ -57,6 +57,7 @@ func (s *Server) initializeHandler() *Server {
 
 	// Wrap all requests with the logging handler (apache-like logs)
 	s.handler = handlers.LoggingHandler(os.Stdout, router)
+
 	return s
 }
 
@@ -75,8 +76,8 @@ func (s *Server) versionHandler(rw http.ResponseWriter, r *http.Request) {
 
 func (s *Server) statusCheckHandler(rw http.ResponseWriter, r *http.Request) {
 	rw.WriteHeader(200)
-	_, err := rw.Write([]byte("OK"))
-	if err != nil {
+
+	if _, err := rw.Write([]byte("OK")); err != nil {
 		log.Error("failed to write status check")
 	}
 }

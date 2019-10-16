@@ -73,9 +73,7 @@ func (s *FlowHandler) listenAddr() string {
  *
  ******************************************************************************/
 func (s *FlowHandler) Start(controlChan chan ControlMessage) error {
-	/*
-	 * Start the goroutines here
-	 */
+	// Start the goroutines here
 	ipfix := NewIpfixHandler(s.ipfixChan, s.resultChan, s.config.IpfixEventType, s.config.AsnPeerMap, s.nr)
 	go ipfix.Start()
 
@@ -96,6 +94,7 @@ func (s *FlowHandler) Start(controlChan chan ControlMessage) error {
 		log.Errorf("flowHandler: Unable to bind with error: %v", err)
 		return err
 	}
+
 	log.Infof("flowHandler: Listening on '%s'", localAddr)
 
 	/*
@@ -119,6 +118,7 @@ func (s *FlowHandler) Start(controlChan chan ControlMessage) error {
 				log.Debug("flowHandler: Ipfix channel closed")
 
 				controlChan <- ControlMessageDone // Signal exit
+
 				log.Debug("flowHandler: Control Message Done sent")
 
 				return nil
@@ -131,20 +131,24 @@ func (s *FlowHandler) Start(controlChan chan ControlMessage) error {
 			 */
 			util.LogIfErr(conn.SetReadBuffer(flowBufferSizeUDP))
 			util.LogIfErr(conn.SetReadDeadline(time.Now().Add(time.Second * flowTimeoutRead)))
+
 			bytesRead, addr, err := conn.ReadFromUDP(buf)
 			if err != nil {
 				// Do not log read timeouts
 				if netErr, ok := err.(net.Error); ok && !netErr.Timeout() {
 					log.Errorf("flowHandler: Error reading from UDP socket: %+v", err)
 				}
+
 				continue
 			}
 
 			agentIP := addr.IP.String()
+
 			flowVersion := uint32(binary.BigEndian.Uint16(buf[0:])) // IPFIX version is 16 bits
 			if flowVersion == 0 {
 				flowVersion = binary.BigEndian.Uint32(buf[0:]) // sflow is 32 bits
 			}
+
 			log.Debugf("flowHandler: %s send %d bytes of version: %x ", agentIP, bytesRead, flowVersion)
 
 			/*

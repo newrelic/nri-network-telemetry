@@ -29,9 +29,11 @@ const (
 )
 
 func main() {
-	var err error
-	var nrApp newrelic.Application
-	var config Config
+	var (
+		err    error
+		nrApp  newrelic.Application
+		config Config
+	)
 
 	// Capture signals we care about
 	sigChan := make(chan os.Signal, 1)
@@ -60,6 +62,7 @@ func main() {
 	emitterControlChan := make(chan emitter.ControlMessage, 1)
 	emitterControlChan <- emitter.ControlMessageStart
 	resultEmitter := emitter.New(config.EmitTarget, config.EmitConfig, nrApp)
+
 	go func() {
 		err := resultEmitter.Start(emitterControlChan)
 		if err != nil {
@@ -73,6 +76,7 @@ func main() {
 	flowControlChan := make(chan flowhandler.ControlMessage, 1)
 	flowControlChan <- flowhandler.ControlMessageStart
 	fh := flowhandler.New(config.FlowConfig, resultEmitter.EmitChan(), nrApp)
+
 	go func() {
 		err := fh.Start(flowControlChan)
 		if err != nil {
@@ -86,6 +90,7 @@ func main() {
 	httpControlChan := make(chan httpserver.ControlMessage, 1)
 	httpControlChan <- httpserver.ControlMessageStart
 	apiHandler := httpserver.New(Version, config.BindAddress, config.HTTPPort, nrApp)
+
 	go func() {
 		err := apiHandler.Start(httpControlChan)
 		if err != nil {

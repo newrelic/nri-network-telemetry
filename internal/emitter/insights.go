@@ -27,10 +27,10 @@ type insightsEmitter struct {
  *
  ******************************************************************************/
 func (e *insightsEmitter) Validate() error {
-
 	if e.config.NrAccountID == "" {
 		return errors.New("missing Account ID")
 	}
+
 	if e.config.NrInsertKey == "" {
 		return errors.New("missing Insert Key")
 	}
@@ -53,7 +53,6 @@ func (e *insightsEmitter) EmitChan() chan map[string]interface{} {
  *
  ******************************************************************************/
 func (e *insightsEmitter) Start(controlChan chan ControlMessage) error {
-
 	log.Info("emitter::Insights: Starting emitter")
 
 	if err := e.Validate(); err != nil {
@@ -63,13 +62,16 @@ func (e *insightsEmitter) Start(controlChan chan ControlMessage) error {
 
 	// Do some stuff to prep
 	client := insights.NewInsertClient(e.config.NrInsertKey, e.config.NrAccountID)
+
 	if e.config.NrInsightsHost != "" {
 		client.UseCustomURL(e.config.NrInsightsHost)
 	}
+
 	if err := client.Validate(); err != nil {
 		log.Errorf("emitter::Insights: Client validation Error!")
 		return err
 	}
+
 	if err := client.Start(); err != nil {
 		log.Errorf("emitter::Insights: Failed to start batch client!")
 		return err
