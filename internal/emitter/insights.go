@@ -27,7 +27,6 @@ type insightsEmitter struct {
  *
  ******************************************************************************/
 func (e *insightsEmitter) Validate() error {
-
 	if e.config.NrAccountID == "" {
 		return errors.New("missing Account ID")
 	}
@@ -53,7 +52,6 @@ func (e *insightsEmitter) EmitChan() chan map[string]interface{} {
  *
  ******************************************************************************/
 func (e *insightsEmitter) Start(controlChan chan ControlMessage) error {
-
 	log.Info("emitter::Insights: Starting emitter")
 
 	if err := e.Validate(); err != nil {

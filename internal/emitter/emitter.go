@@ -33,7 +33,6 @@ type EmitConfig struct {
  *
  ******************************************************************************/
 func New(target string, config EmitConfig, nr newrelic.Application) EmitInterface {
-
 	// Return the correct type based on the requested Target
 	switch target {
 	case "LOG":
