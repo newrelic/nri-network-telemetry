@@ -50,5 +50,4 @@ linters:
     - gochecknoglobals
     - godox
     - interfacer
-    - wsl
 

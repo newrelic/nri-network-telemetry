@@ -104,15 +104,19 @@ func (h *IpfixHandler) handlePacketForAgent(agent string, packetChan chan []byte
 
 		parseSegment := newrelic.StartSegment(txn, "ParseBuffer")
 		msg, err := session.ParseBuffer(packet)
+
 		util.LogIfErr(parseSegment.End())
+
 		if err != nil {
 			log.Warnf("IPFIXhandler: Error reading packet from %s: %v", agent, err)
 			util.LogIfErr(txn.NoticeError(err))
 			util.LogIfErr(txn.End())
+
 			continue
 		}
 
 		recordsSeg := newrelic.StartSegment(txn, "ParseDataRecords")
+
 		for _, record := range msg.DataRecords {
 			rec := make(map[string]interface{})
 
@@ -124,15 +128,19 @@ func (h *IpfixHandler) handlePacketForAgent(agent string, packetChan chan []byte
 
 			interpSeg := newrelic.StartSegment(txn, "InterpretRecord")
 			ifs := interpreter.Interpret(record)
+
 			util.LogIfErr(interpSeg.End())
 
 			copySeg := newrelic.StartSegment(txn, "CopyRecord")
+
 			for _, iif := range ifs {
 				rec[iif.Name] = iif.Value
 			}
+
 			util.LogIfErr(copySeg.End())
 
 			translateSeg := newrelic.StartSegment(txn, "TranslateRecord")
+
 			if _, ok := rec["tcpControlBits"]; ok {
 				rec["tcpFlagNS"] = (rec["tcpControlBits"].(uint16)&0x0100 == 0x0100)
 				rec["tcpFlagCWR"] = (rec["tcpControlBits"].(uint16)&0x0080 == 0x0080)
@@ -179,15 +187,18 @@ func (h *IpfixHandler) handlePacketForAgent(agent string, packetChan chan []byte
 				delete(rec, "flowStartMilliseconds")
 				delete(rec, "flowEndMilliseconds")
 			}
+
 			util.LogIfErr(translateSeg.End())
 
 			// Send Event
 			queueSegment := newrelic.StartSegment(txn, "QueueForEmit")
+
 			h.resultChan <- rec
+
 			util.LogIfErr(queueSegment.End())
 		}
-		util.LogIfErr(recordsSeg.End())
 
+		util.LogIfErr(recordsSeg.End())
 		util.LogIfErr(txn.End())
 	}
 }

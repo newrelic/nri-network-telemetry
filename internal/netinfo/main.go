@@ -17,19 +17,23 @@ func NewNetInfo(networkFile string, hostFile string) NetInfo {
 
 	if networkFile != "" {
 		log.Infof("loading network data from '%s'", networkFile)
+
 		count, err := n.loadNetworks(networkFile)
 		if err != nil {
 			log.Errorf("failed with error: %v", err.Error())
 		}
+
 		log.Debugf("loaded %d network entries", count)
 	}
 
 	if hostFile != "" {
 		log.Infof("loading host data from '%s'", hostFile)
+
 		count, err := n.loadHosts(hostFile)
 		if err != nil {
 			log.Errorf("failed with error: %v", err.Error())
 		}
+
 		log.Debugf("loaded %d host entries", count)
 	}
 

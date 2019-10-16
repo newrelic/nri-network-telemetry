@@ -68,6 +68,7 @@ func (c *Config) Load() (err error) {
 	if err = envconfig.Process(AppName, &c.EmitConfig.Log); err != nil {
 		return err
 	}
+
 	if err = envconfig.Process(AppName, &c.EmitConfig.Insights); err != nil {
 		return err
 	}

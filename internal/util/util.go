@@ -19,6 +19,7 @@ func FnvHash(s []byte) (h uint64) {
 		h ^= uint64(s[i])
 		h *= fnvPrime
 	}
+
 	return
 }
 

@@ -74,6 +74,7 @@ func (n *NetInfo) loadNetworks(filename string) (count uint32, err error) {
 	if err != nil {
 		return 0, err
 	}
+
 	reader := csv.NewReader(fileh)
 
 	for {
@@ -81,6 +82,7 @@ func (n *NetInfo) loadNetworks(filename string) (count uint32, err error) {
 		if err == io.EOF {
 			break
 		}
+
 		if err != nil {
 			return count, err
 		}
@@ -101,6 +103,7 @@ func (n *NetInfo) loadNetworks(filename string) (count uint32, err error) {
 
 		if asn > 0 {
 			n.asns[uint32(asn)] = line[2]
+
 			err = n.networks.Insert(NewNetwork(*network, uint32(asn)))
 			if err != nil {
 				return count, err

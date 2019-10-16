@@ -50,23 +50,27 @@ type SflowPacket []byte
  ******************************************************************************/
 func (h *SflowHandler) Start() {
 	for packet := range h.packetChan {
-		txn := h.nr.StartTransaction("SflowPacket", nil, nil)
-
-		parseSegment := newrelic.StartSegment(txn, "CreateParser")
 		var sflow layers.SFlowDatagram
+
+		txn := h.nr.StartTransaction("SflowPacket", nil, nil)
+		parseSegment := newrelic.StartSegment(txn, "CreateParser")
 		parser := gopacket.NewDecodingLayerParser(layers.LayerTypeSFlow, &sflow)
 		decoded := make([]gopacket.LayerType, 0, 10)
+
 		util.LogIfErr(parseSegment.End())
 
 		decodeSegment := newrelic.StartSegment(txn, "DecodeLayers")
 		err := parser.DecodeLayers(packet, &decoded)
+
 		util.LogIfErr(decodeSegment.End())
+
 		if err != nil {
 			log.Warnf("SflowHandler: Unable to create decoder: %v", err)
 			log.Debugf("%s", hex.Dump(packet))
 
 			util.LogIfErr(txn.NoticeError(err))
 			util.LogIfErr(txn.End())
+
 			continue
 		}
 
@@ -77,6 +81,7 @@ func (h *SflowHandler) Start() {
 			log.Errorf("SflowHandler: Failed to make events with error: %v", err)
 			util.LogIfErr(txn.NoticeError(err))
 			util.LogIfErr(txn.End())
+
 			continue
 		}
 
@@ -177,6 +182,7 @@ func (h *SflowHandler) makeEvents(sflow layers.SFlowDatagram, txn newrelic.Trans
 		// Send off the event
 		queueSegment := newrelic.StartSegment(txn, "QueueForEmit")
 		h.resultChan <- rec
+
 		util.LogIfErr(queueSegment.End())
 	}
 
