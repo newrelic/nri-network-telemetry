@@ -1,5 +1,10 @@
 # Network Telemetry
 
+[![Build Status](https://circleci.com/gh/newrelic/nri-network-telemetry.svg?style=svg)](https://circleci.com/gh/newrelic/nri-network-telemetry)
+[![Go Report Card](https://goreportcard.com/badge/github.com/newrelic/nri-network-telemetry?style=flat-square)](https://goreportcard.com/report/github.com/newrelic/nri-network-telemetry)
+[![GoDoc](https://godoc.org/github.com/newrelic/nri-network-telemetry?status.svg)](https://godoc.org/github.com/newrelic/nri-network-telemetry)
+[![Release](https://img.shields.io/github/release/newrelic/nri-network-telemetry.svg?style=flat-square)](https://github.com/newrelic/nri-network-telemetry/releases/latest)
+
 Network Telemetry Integration for New Relic
 
 ## Usage
