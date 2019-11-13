@@ -1,25 +1,9 @@
-package emitter_test
+package emitter
 
 import (
-	. "github.com/newrelic/nri-network-telemetry/internal/emitter"
-
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"testing"
 )
 
-var _ = Describe("Emitter", func() {
-	var (
-		conf EmitConfig
-	)
+func TestEmitter(t *testing.T) {
 
-	Describe("Instantiated Emitter", func() {
-		Context("configured to use STDOUT", func() {
-			em := New("LOG", conf, nil)
-			It("Should create a new emitter", func() {
-				Expect(em).To(Equal("STDOUT"))
-			})
-		})
-
-	})
-
-})
+}
