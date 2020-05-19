@@ -1,9 +1,19 @@
+[![Community Project header](https://github.com/newrelic/open-source-office/raw/master/examples/categories/images/Community_Project.png)](https://github.com/newrelic/open-source-office/blob/master/examples/categories/index.md#category-community-project)
+
 # Network Telemetry
 
-[![Build Status](https://circleci.com/gh/newrelic/nri-network-telemetry.svg?style=svg)](https://circleci.com/gh/newrelic/nri-network-telemetry)
+[![Testing](https://github.com/newrelic/nri-network-telemetry/workflows/Testing/badge.svg)](https://github.com/newrelic/nri-network-telemetry/actions)
+[![Security Scan](https://github.com/newrelic/nri-network-telemetry/workflows/Security%20Scan/badge.svg)](https://github.com/newrelic/nri-network-telemetry/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/newrelic/nri-network-telemetry?style=flat-square)](https://goreportcard.com/report/github.com/newrelic/nri-network-telemetry)
 [![GoDoc](https://godoc.org/github.com/newrelic/nri-network-telemetry?status.svg)](https://godoc.org/github.com/newrelic/nri-network-telemetry)
-[![Release](https://img.shields.io/github/release/newrelic/nri-network-telemetry.svg?style=flat-square)](https://github.com/newrelic/nri-network-telemetry/releases/latest)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/newrelic/nri-network-telemetry/blob/master/LICENSE)
+[![CLA assistant](https://cla-assistant.io/readme/badge/newrelic/nri-network-telemetry)](https://cla-assistant.io/newrelic/nri-network-telemetry)
+[![Release](https://img.shields.io/github/v/release/newrelic/nri-network-telemetry?sort=semver)](https://github.com/newrelic/nri-network-telemetry/releases/latest)
+
+[![Docker Stars](https://img.shields.io/docker/stars/newrelic/nri-network-telemetry.svg)](https://hub.docker.com/r/newrelic/nri-network-telemetry)
+[![Docker Pulls](https://img.shields.io/docker/pulls/newrelic/nri-network-telemetry.svg)](https://hub.docker.com/r/newrelic/nri-network-telemetry)
+[![Docker Size](https://img.shields.io/docker/image-size/newrelic/nri-network-telemetry.svg?sort=semver)](https://hub.docker.com/r/newrelic/nri-network-telemetry)
+[![Docker Version](https://img.shields.io/docker/v/newrelic/nri-network-telemetry.svg?sort=semver)](https://hub.docker.com/r/newrelic/nri-network-telemetry)
 
 Network Telemetry Integration for New Relic
 
