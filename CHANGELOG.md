@@ -1,3 +1,8 @@
+<a name="v1.0.3"></a>
+## [v1.0.3] - 2020-05-19
+### Bug Fixes
+- **build:** Remove snapcraft reference on release target
+
 <a name="v1.0.2"></a>
 ## [v1.0.2] - 2020-05-19
 ### Bug Fixes
@@ -11,6 +16,7 @@
 ### Bug Fixes
 - build directory should be included
 
-[Unreleased]: https://github.com/newrelic/nri-network-telemetry/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/newrelic/nri-network-telemetry/compare/v1.0.3...HEAD
+[v1.0.3]: https://github.com/newrelic/nri-network-telemetry/compare/v1.0.2...v1.0.3
 [v1.0.2]: https://github.com/newrelic/nri-network-telemetry/compare/v1.0.1...v1.0.2
 [v1.0.1]: https://github.com/newrelic/nri-network-telemetry/compare/v1.0.0...v1.0.1
