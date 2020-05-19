@@ -1,44 +1,33 @@
 #
 # Makefile fragment for Docker actions
 #
+DOCKER_FILE       ?= build/package/Dockerfile
+DOCKER_IMAGE      ?= newrelic/nri-network-telemetry
+DOCKER_IMAGE_TAG  ?= snapshot
 
-IMAGE_NAME     := newrelic-es/$(PROJECT_NAME)
-DOCKER         := docker
-DOCKER_COMPOSE := docker-compose -f scripts/docker-compose-build.yml
-TEST_CMD := go test -v -coverprofile=coverage.txt -covermode=atomic ./...
-LINE_BREAK := "--------------------------------------------------------------------"
-
-docker-image: compile-linux
-	$(DOCKER) build -t $(IMAGE_NAME):$(PROJECT_VER) .
-
-docker-clean:
-	@echo "### Removing $(PROJECT_NAME) containers..."
-	@echo ${LINE_BREAK}
-	@$(DOCKER) rm -f $$($(DOCKER) ps -a | grep $(PROJECT_NAME) | cut -d' ' -f 1)
-	@echo ${LINE_BREAK}
-
-docker-run:
-	@echo "### Running via docker-compose..."
-	@read -p "Enter any CLI arguments, else hit enter to skip:" args; \
-	$(DOCKER_COMPOSE) run golang sh -c "$(TEST_CMD) && $(GO) run cmd/flex/nri-flex.go $$args"
+# Build the docker image
+docker-build: compile-linux
+	@echo "=== $(PROJECT_NAME) === [ docker-build     ]: Creating docker image: $(DOCKER_IMAGE):$(DOCKER_IMAGE_TAG) ..."
+	docker build -f $(DOCKER_FILE) -t $(DOCKER_IMAGE):$(DOCKER_IMAGE_TAG) $(BUILD_DIR)/linux/
 
 
-#
-# Testing within Docker
-#
-docker-test-setup:
-	@echo "### If first run, this may take some time..."
-	$(DOCKER_COMPOSE) -f scripts/docker-compose-build.yml build
+docker-login:
+	@echo "=== $(PROJECT_NAME) === [ docker-login     ]: logging into docker hub"
+	@if [ -z "${DOCKER_USERNAME}" ]; then \
+		echo "Failure: DOCKER_USERNAME not set" ; \
+		exit 1 ; \
+	fi
+	@if [ -z "${DOCKER_PASSWORD}" ]; then \
+		echo "Failure: DOCKER_PASSWORD not set" ; \
+		exit 1 ; \
+	fi
+	@echo "=== $(PROJECT_NAME) === [ docker-login     ]: username: '$$DOCKER_USERNAME'"
+	@echo ${DOCKER_PASSWORD} | $(DOCKER) login -u ${DOCKER_USERNAME} --password-stdin
 
-docker-test: docker-test-setup
-	@echo "### Testing via docker-compose (linux)"
-	$(DOCKER_COMPOSE) run golang $(TEST_CMD)
 
-docker-test-infra: docker-setup compile-linux docker-clean
-	@echo "### Testing within NR Infra Container"
-	@read -p "Enter Infrastructure License Key:" infrakey; \
-	$(DOCKER) run -d --name $(BINARY_NAME) --network=host --cap-add=SYS_PTRACE \
-	-v "/:/host:ro" -v "/var/run/docker.sock:/var/run/docker.sock" \
-	-e NRIA_LICENSE_KEY=$$infrakey $(IMAGE_NAME):$(PROJECT_VER)
-	$(DOCKER) ps -a | grep $(IMAGE_NAME)
+# Push the docker image
+docker-push: docker-login docker-build
+	@echo "=== $(PROJECT_NAME) === [ docker-push      ]: Pushing docker image: $(DOCKER_IMAGE):$(DOCKER_IMAGE_TAG) ..."
+	$(DOCKER) push $(DOCKER_IMAGE):$(DOCKER_IMAGE_TAG)
 
+.PHONY: docker-build docker-login docker-push

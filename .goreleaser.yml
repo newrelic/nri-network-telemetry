@@ -1,0 +1,65 @@
+project_name: nri-network-telemetry
+
+env:
+  - GO111MODULE=on
+
+before:
+  hooks:
+    - go mod download
+
+builds:
+  - id: nrnt
+    dir: cmd/nri-network-telemetry
+    binary: nri-network-telemetry
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - amd64
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.appName={{.Binary}}
+
+release:
+  name_template: "{{.ProjectName}} v{{.Version}}"
+
+archives:
+  - id: "default"
+    builds:
+      - nrnt
+    replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - CHANGELOG.md
+      - LICENSE
+      - README.md
+
+signs:
+  - artifacts: all
+    args: ["-u", "0xDC9FC6B1FCE47986", "--output", "${signature}", "--detach-sign", "${artifact}"]
+
+dockers:
+  - dockerfile: build/package/Dockerfile
+    image_templates:
+      - "newrelic/nri-network-telemetry:{{ .Tag }}"
+      - "newrelic/nri-network-telemetry:v{{ .Major }}.{{ .Minor }}"
+      - "newrelic/nri-network-telemetry:latest"
+    binaries:
+      - nri-network-telemetry
+    build_flag_templates:
+      - "--pull"
+      - "--label=repository=http://github.com/newrelic/newrelic-nri-network-telemetry"
+      - "--label=homepage=https://developer.newrelic.com/"
+      - "--label=maintainer=Developer Toolkit <opensource@newrelic.com>"
+
+# Already using git-chglog
+changelog:
+  skip: true
+
