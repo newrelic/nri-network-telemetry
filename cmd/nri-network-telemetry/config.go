@@ -34,7 +34,7 @@ func (c *Config) Load() (err error) {
 	// Set defaults for those that have them
 	c.Debug = false
 	c.NrEnabled = true
-	c.NrServiceName = AppName
+	c.NrServiceName = appName
 	c.NetsFile = "asndb.csv"
 	c.HostsFile = ""
 	c.BindAddress = "0.0.0.0"
@@ -52,24 +52,24 @@ func (c *Config) Load() (err error) {
 	c.EmitTarget = DefaultEmitTarget
 	c.EmitConfig.Insights = emitter.InsightsEmitterConfig{}
 	c.EmitConfig.Log = emitter.LogEmitterConfig{
-		Prefix: AppName,
+		Prefix: appName,
 	}
 	// Load config from Environment
-	if err = envconfig.Process(AppName, c); err != nil {
+	if err = envconfig.Process(appName, c); err != nil {
 		return err
 	}
 
 	// Load FlowHandler config from the Environment
-	if err = envconfig.Process(AppName, &c.FlowConfig); err != nil {
+	if err = envconfig.Process(appName, &c.FlowConfig); err != nil {
 		return err
 	}
 
 	// Load Emitter config from Environment
-	if err = envconfig.Process(AppName, &c.EmitConfig.Log); err != nil {
+	if err = envconfig.Process(appName, &c.EmitConfig.Log); err != nil {
 		return err
 	}
 
-	if err = envconfig.Process(AppName, &c.EmitConfig.Insights); err != nil {
+	if err = envconfig.Process(appName, &c.EmitConfig.Insights); err != nil {
 		return err
 	}
 
@@ -80,10 +80,10 @@ func (c *Config) Load() (err error) {
  *
  ******************************************************************************/
 func parseCommandLine(args []string) (conf Config, err error) {
-	log.Debugf("%s: Parsing configuration", AppName)
+	log.Debugf("%s: Parsing configuration", appName)
 
-	cli := kingpin.New(AppName, "Flow collector for New Relic Insights")
-	cli.Version(Version)
+	cli := kingpin.New(appName, "Flow collector for New Relic Insights")
+	cli.Version(version)
 
 	debug := cli.Flag("debug", "Enable debugging").Default("false").Short('d').Bool()
 	nrAgent := cli.Flag("nragent", "Disable New Relic Go Agent").Default("false").Short('n').Bool()
@@ -115,7 +115,7 @@ func parseCommandLine(args []string) (conf Config, err error) {
 		conf.EmitTarget = *emitTarget
 	}
 
-	log.Debugf("%s: Config before loading NetInfo: %+v", AppName, conf)
+	log.Debugf("%s: Config before loading NetInfo: %+v", appName, conf)
 
 	if *netsFile != "" {
 		conf.NetsFile = *netsFile
@@ -129,7 +129,7 @@ func parseCommandLine(args []string) (conf Config, err error) {
 
 	conf.FlowConfig.AsnPeerMap = conf.NetInfo.AsnPeerMap()
 
-	log.Infof("%s: Finished parsing config", AppName)
+	log.Infof("%s: Finished parsing config", appName)
 
 	return conf, err
 }

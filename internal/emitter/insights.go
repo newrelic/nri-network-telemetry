@@ -5,8 +5,9 @@ import (
 
 	newrelic "github.com/newrelic/go-agent"
 	insights "github.com/newrelic/go-insights/client"
-	util "github.com/newrelic/nri-network-telemetry/internal/util"
 	log "github.com/sirupsen/logrus"
+
+	util "github.com/newrelic/nri-network-telemetry/internal/util"
 )
 
 type InsightsEmitterConfig struct {

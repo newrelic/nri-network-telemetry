@@ -9,6 +9,7 @@ import (
 
 	"github.com/calmh/ipfix"
 	"github.com/google/gopacket/layers"
+
 	"github.com/newrelic/nri-network-telemetry/internal/util"
 )
 

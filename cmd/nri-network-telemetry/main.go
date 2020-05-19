@@ -10,14 +10,15 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/newrelic/go-agent/_integrations/nrlogrus"
+
 	"github.com/newrelic/nri-network-telemetry/internal/emitter"
 	"github.com/newrelic/nri-network-telemetry/internal/flowhandler"
 	"github.com/newrelic/nri-network-telemetry/internal/httpserver"
 )
 
-const (
-	AppName string = "NRNT"
-	Version string = "dev"
+var (
+	appName string = "NRNT"
+	version string = "dev"
 )
 
 const (
@@ -89,7 +90,7 @@ func main() {
 	 **********************************************/
 	httpControlChan := make(chan httpserver.ControlMessage, 1)
 	httpControlChan <- httpserver.ControlMessageStart
-	apiHandler := httpserver.New(Version, config.BindAddress, config.HTTPPort, nrApp)
+	apiHandler := httpserver.New(version, config.BindAddress, config.HTTPPort, nrApp)
 
 	go func() {
 		err := apiHandler.Start(httpControlChan)
@@ -101,7 +102,7 @@ func main() {
 	/***********************************************
 	 * Wait forever for a signal, and kill things
 	 **********************************************/
-	log.Infof("initialized v%s", Version)
+	log.Infof("initialized v%s", version)
 
 	sig := <-sigChan
 	log.Debugf("exiting on signal %v", sig)

@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
+
 	"github.com/newrelic/nri-network-telemetry/internal/util"
 
 	newrelic "github.com/newrelic/go-agent"
