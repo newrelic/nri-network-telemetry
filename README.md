@@ -36,6 +36,21 @@ This project is distributed under the [Apache 2 license](LICENSE).
 
 # Deploying
 
+## Docker
+
+```bash
+# Download the latest docker image
+docker pull newrelic/nri-network-telemetry
+
+# Run in debugging mode
+docker run -it --rm \
+  -e NEW_RELIC_LICENSE_KEY \
+  -e NEW_RELIC_ACCOUNT_ID \
+  -e NEW_RELIC_INSERT_KEY \
+  newrelic/nri-network-telemetry \
+  -d -n -t LOG
+```
+
 ## Requirements:
 
 * GNU Make
