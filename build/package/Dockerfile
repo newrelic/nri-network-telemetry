@@ -1,4 +1,4 @@
-FROM alpine:3.11
+FROM alpine:3.14
 
 # Add the binary
 COPY nri-network-telemetry /bin/nri-network-telemetry
