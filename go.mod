@@ -16,8 +16,8 @@ require (
 	github.com/newrelic/go-agent v3.4.0+incompatible
 	github.com/newrelic/go-insights v1.0.3
 	github.com/psampaz/go-mod-outdated v0.6.0
-	github.com/sirupsen/logrus v1.6.0
-	github.com/stretchr/testify v1.5.1
+	github.com/sirupsen/logrus v1.8.3
+	github.com/stretchr/testify v1.7.0
 	github.com/tsuyoshiwada/go-gitcmd v0.0.0-20180205145712-5f1f5f9475df // indirect
 	github.com/urfave/cli v1.22.4 // indirect
 	github.com/yl2chen/cidranger v1.0.0
